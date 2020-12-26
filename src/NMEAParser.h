@@ -65,7 +65,7 @@ namespace NMEA {
 template <size_t S> class NMEAParser {
 
 private:
-  typedef void (*NMEAErrorHandler)(void);
+  typedef void (*NMEAErrorHandler)(NMEA::ErrorCode);
   typedef void (*NMEAHandler)(void);
   typedef struct { char mToken[6]; NMEAHandler mHandler; } NMEAHandlerEntry;
   typedef enum { INIT, SENT, ARG, CRCH, CRCL, CRLFCR, CRLFLF } State;
@@ -75,7 +75,6 @@ public:
    * maximum sentence size is 82 including the starting '$' and the <cr><lf>
    * at the end. Since '$', the '*', the 2 characters CRC and the <cr><lf>
    * are not bufferized, 82 - 6 + 1 = 77 chars  are enough.
-   * is enough.
    */
   static const uint8_t kSentenceMaxSize = 77;
 
@@ -170,7 +169,7 @@ private:
   void callErrorHandler(void)
   {
     if (mErrorHandler != NULL) {
-      mErrorHandler();
+      mErrorHandler(mError);
     }
   }
 
